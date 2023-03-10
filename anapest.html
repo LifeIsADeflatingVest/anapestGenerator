@@ -6,90 +6,89 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/rita/1.3.11/rita-full.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
-
-  <body>
-
-    <!-- Intro Header -->
-    <header>
+  <body style="background-color:black;color:silver">
 	<input type="button" style="margin-bottom:5px;padding:5px" value="Generate New" onclick="window.location.reload();">
 	<br>
-    </header>
 	<div id="out1" style="color:white;font-family:Verdana"></div><br>
-	<script>
-	var i=0;
-	var rhymedWord, rhymedWord2;
-	var preRhyme, preRhymeB;
-	var advS, advSB;
-	var det = " they ";
+  </body>
+  	<script>
+	let rhymedWord, rhymedWord2, preRhyme, preRhymeB, advS, advSB;
+	let det = " they ";
 
 	//creating rhymes
-	var w1 = wordChoice("vbn", 2);
-	var w1b = wordChoice("vb", 2);
-	var w2 = rhymeGen('https://api.datamuse.com/words?rel_rhy=', w1) //wordChoice("vb", 3)
-	var w2b = rhymeGen('https://api.datamuse.com/words?rel_rhy=', w1b) // wordChoice("vb", 2)
-	var syllNum = new_count(w2);
-	var syllNumB = new_count(w2b);
-	// first & second lines
-	if (w2 != undefined) {
-		rhymedWord = w2;
-		if (syllNum == 1) {
-			advS = 3;
-			det = " some ";
-			preRhyme = wordChoice("nns", advS)
-		}
-		else if (syllNum == 2) {
-			advS = 2;
-			preRhyme = RiTa.randomWord("rb", advS)
-		}
-		else if (syllNum == 3) {
-			advS = 1;
-			preRhyme = RiTa.randomWord("rb", advS);
-		}
-		else if (syllNum == 4) {
-			preRhyme = "";
-		}
-		else {
-			advS = 1;
-			preRhyme = RiTa.randomWord("rb", advS);
-		}
-	}
-	else {
-		rhymedWord = wordChoice("vb", 3);
-		advS = 1;
-		preRhyme = RiTa.randomWord("rb", advS);
-	}
-	// third and fourth lines
-		if (w2b != undefined) {
-		rhymedWord2 = w2b;
-		if (syllNumB == 1) {
-			advSB = 2;
-			preRhymeB = wordChoice("rb", advSB)
-		}
-		else if (syllNumB == 2) {
-			advSB = 1;
-			preRhymeB = RiTa.randomWord("md", advSB)
-		}
-		else if (syllNumB == 3) {
-			advSB = 1;
-			preRhymeB = "";
-		}
-		else {
-			advSB = 1;
-			preRhymeB = RiTa.randomWord("md", advSB);
-		}
-	}
-	else {
-		rhymedWord2 = wordChoice("vb", 2);
-		advSB = 1;
-		preRhymeB = RiTa.randomWord("md",advSB);
-	}
-		
-		// structuring lines	
-		var line1 = capitalizeFirstLetter(RiTa.randomWord("prp$",1)) + " " + wordChoice("jj",2) + " " + wordChoice("nn",3) + " " + retConjunction() + " " + wordChoice("nns",2) + " has " + w1 + ",";
-		var line2 = RiTa.randomWord("jj",1) + " " + wordChoice2("jj",3) + " " + wordChoice("nns",2) + " " + retConjunction2() + det + preRhyme + " " + rhymedWord + ".";
-		var line3 = capitalizeFirstLetter(wordChoice("jj",3)) + " " + RiTa.randomWord("jj",1) + " " + wordChoice("nn",2) + " " + retConjunction() + " " + wordChoice("nns",2) + " " + RiTa.randomWord ("md", 1) + " " + w1b + ",";
-		var line4 = RiTa.randomWord("prp$",1) + " " + wordChoice("jj",2) + " " + RiTa.randomWord("jj", 1) + " " + wordChoice("nn",2) + " " + retConjunction2() + " " + wordChoice("nns",2) + " " + preRhymeB + " " + rhymedWord2 + ".";
-		$('#out1').append(line1+"<br/>"+line2+"<br/>"+line3+"<br/>"+line4+"<br/>"+"<br/>");
+	let w1 = wordChoice("vbn", 2);
+	let w1b = wordChoice("vb", 2);
+	let w2, w2b;
+	//
+	fetchTheWord('https://api.datamuse.com/words?rel_rhy='+w1).then(function(obj){
+		w2 = obj[Math.floor(Math.random()*obj.length)].word;
+		fetchTheWord('https://api.datamuse.com/words?rel_rhy='+w1b).then(function(obj){
+			w2b = obj[Math.floor(Math.random()*obj.length)].word;
+			var syllNum = new_count(w2);
+			var syllNumB = new_count(w2b);
+			// first & second lines
+			if (w2 != undefined) {
+				rhymedWord = w2;
+				if (syllNum == 1) {
+					advS = 3;
+					det = " some ";
+					preRhyme = wordChoice("nns", advS)
+				}
+				else if (syllNum == 2) {
+					advS = 2;
+					preRhyme = RiTa.randomWord("rb", advS)
+				}
+				else if (syllNum == 3) {
+					advS = 1;
+					preRhyme = RiTa.randomWord("rb", advS);
+				}
+				else if (syllNum == 4) {
+					preRhyme = "";
+				}
+				else {
+					advS = 1;
+					preRhyme = RiTa.randomWord("rb", advS);
+				}
+			}
+			else {
+				rhymedWord = wordChoice("vb", 3);
+				advS = 1;
+				preRhyme = RiTa.randomWord("rb", advS);
+			}
+			// third and fourth lines
+			if (w2b != undefined) {
+				rhymedWord2 = w2b;
+				if (syllNumB == 1) {
+					advSB = 2;
+					preRhymeB = wordChoice("rb", advSB)
+				}
+				else if (syllNumB == 2) {
+					advSB = 1;
+					preRhymeB = RiTa.randomWord("md", advSB)
+				}
+				else if (syllNumB == 3) {
+					advSB = 1;
+					preRhymeB = "";
+				}
+				else {
+					advSB = 1;
+					preRhymeB = RiTa.randomWord("md", advSB);
+				}
+			}
+			else {
+				rhymedWord2 = wordChoice("vb", 2);
+				advSB = 1;
+				preRhymeB = RiTa.randomWord("md",advSB);
+			}
+				
+				// structuring lines	
+			var line1 = capitalizeFirstLetter(RiTa.randomWord("prp$",1)) + " " + wordChoice("jj",2) + " " + wordChoice("nn",3) + " " + retConjunction() + " " + wordChoice("nns",2) + " has " + w1 + ",";
+			var line2 = RiTa.randomWord("jj",1) + " " + wordChoice2("jj",3) + " " + wordChoice("nns",2) + " " + retConjunction2() + det + preRhyme + " " + rhymedWord + ".";
+			var line3 = capitalizeFirstLetter(wordChoice("jj",3)) + " " + RiTa.randomWord("jj",1) + " " + wordChoice("nn",2) + " " + retConjunction() + " " + wordChoice("nns",2) + " " + RiTa.randomWord ("md", 1) + " " + w1b + ",";
+			var line4 = RiTa.randomWord("prp$",1) + " " + wordChoice("jj",2) + " " + RiTa.randomWord("jj", 1) + " " + wordChoice("nn",2) + " " + retConjunction2() + " " + wordChoice("nns",2) + " " + preRhymeB + " " + rhymedWord2 + ".";
+			$('#out1').append(line1+"<br/>"+line2+"<br/>"+line3+"<br/>"+line4+"<br/>"+"<br/>");
+		});
+	});
 
 	// word picking functions for stress detection
 	function wordChoice(pos, syl) {
@@ -127,58 +126,30 @@
 
 	// counts syllables
 	function new_count(word) {
-		word = word.toLowerCase();                                     //word.downcase!
-		if(word.length <= 3) { return 1; }                             //return 1 if word.length <= 3
-			word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');   //word.sub!(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '')
-			word = word.replace(/^y/, '');                                 //word.sub!(/^y/, '')
-		return word.match(/[aeiouy]{1,2}/g).length;                    //word.scan(/[aeiouy]{1,2}/).size
-}
-	
-	function rhymeGen(urlAdd2, sWord){
-		var dmuseQuery2 = dataMUSE(urlAdd2 + sWord);
-		var aIndex2 = dmuseQuery2.length;
-		var rnd2 = Math.floor((Math.random() * aIndex2) + 1);
-		var dmuseWord2 = dmuseQuery2[rnd2];
-		return dmuseWord2;
-	}
-	function dataMUSE (myURL) {
-		var json = (function () {
-			var json = null;
-			$.ajax({
-				'async': false,
-				'global': false,
-				'url': myURL,
-				'dataType': "json",
-				'success': function (data) {
-					json = data;
-				}
-			});
-			return json;
-		})();
-			
-		var amb2_proto = JSON.stringify(json);
-		var amb2_proto2 = amb2_proto.replace(/[.,\/#!?'"$%\^&\*;:{}\[\]=\-_`~()]/g,"");
-		var amb2_proto3 = amb2_proto2.replace(/word/g , " ");
-		var amb2_proto4 = amb2_proto3.replace(/score/g, " ");
-		var amb2_proto5 = amb2_proto4.replace(/[0-9]/g, " "); 
-		var amb2_proto5b = amb2_proto5.replace(/numSyllables/g, " "); 
-		var amb2_proto6 = amb2_proto5b.replace(/\s+/g,' ').trim();
-		var amb2 = amb2_proto6.split(" ");
-		return amb2;
+		word = word.toLowerCase();
+		if(word.length <= 3) { return 1; } 
+			word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, ''); 
+			word = word.replace(/^y/, '');
+		return word.match(/[aeiouy]{1,2}/g).length;
 	}
 	
 	function retConjunction() {
 		var conjs = ["with", "near", "for"];
-		var inde = Math.floor(Math.random() * (2 - 0 + 1) ) + 0;
-		return conjs[inde];
+		var ind = Math.floor(Math.random() * (2 - 0 + 1) ) + 0;
+		return conjs[ind];
 	}
 	
 	function retConjunction2() {
 		var conjs = ["as", "while", "soon", "then", "which", "how"];
-		var inde = Math.floor(Math.random() * (5 - 0 + 1) ) + 0;
-		return conjs[inde];
+		var ind = Math.floor(Math.random() * (5 - 0 + 1) ) + 0;
+		return conjs[ind];
 	}
 	
+	function fetchTheWord(url) {
+		return new Promise(function (resolve) {
+			resolve($.get(url));
+		});
+	}	
+	
 	</script>
-  </body>
 </html>
